@@ -1,40 +1,32 @@
-# Stage 1: Compile and Build angular codebase
+### STAGE 1: Build ###
+FROM node:lts-alpine AS build
 
-# Use official node image as the base image
-FROM image-registry.openshift-image-registry.svc:5000/openshift/nodejs:16-ubi9 as builder
+#### make the 'app' folder the current working directory
+WORKDIR /usr/src/app
 
-# Set the working directory
-WORKDIR /app
+#### copy both 'package.json' and 'package-lock.json' (if available)
+COPY package*.json ./
 
-USER root
+#### install angular cli
+RUN npm install -g @angular/cli
 
-# Add the source code to app
-COPY package.json ./
-
-# Install all the dependencies
+#### install project dependencies
 RUN npm install
 
+#### copy things
 COPY . .
 
-# Generate the build of the application
-RUN npm run build -- --configuration production --output-path=/dist
+#### generate build --prod
+RUN npm run build:ssr
 
-# Stage 2: Serve app with nginx server
+### STAGE 2: Run ###
+FROM nginxinc/nginx-unprivileged
 
-# Use official nginx image as the base image
-FROM image-registry.openshift-image-registry.svc:5000/openshift/nginx-118:1-90
+#### copy nginx conf
+COPY ./config/nginx.conf /etc/nginx/conf.d/default.conf
 
-# TEST
-USER root
+#### copy artifact build from the 'build environment'
+COPY --from=build /usr/src/app/dist/vitorspace/browser /usr/share/nginx/html
 
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# RUN rm -rf /usr/share/nginx/html/*
-# COPY --from=builder /dist /usr/share/nginx/html
-RUN rm -rf /opt/app-root/src/*
-COPY --from=builder /dist /opt/app-root/src
-
-# Expose port 8080
-EXPOSE 8080
-
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+#### don't know what this is, but seems cool and techy
+CMD ["nginx", "-g", "daemon off;"]
