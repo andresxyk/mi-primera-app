@@ -17,6 +17,7 @@ RUN npm install
 COPY . .
 
 #### generate build --prod
+RUN npm config set registry http://registry.npmjs.org/
 RUN npm run build:ssr
 
 ### STAGE 2: Run ###
