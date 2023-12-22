@@ -12,7 +12,7 @@ USER root
 COPY package.json ./
 
 # Install all the dependencies
-RUN npm install
+RUN npm install -g npm@10.2.5
 
 COPY . .
 
