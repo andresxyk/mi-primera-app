@@ -7,25 +7,24 @@ FROM registry.access.redhat.com/ubi8/nodejs-18:latest as builder
 WORKDIR /app
 
 USER root
-RUN ls -lrt
+#RUN ls -lrt
 # Add the source code to app
 COPY package.json ./
 
 # Install all the dependencies
-RUN npm install -g npm@10.2.5
 RUN npm install
 RUN npm install -g @angular/cli
 
 COPY . .
 
 #genera dist
-RUN mkdir /dist
+#RUN mkdir /dist
 
 # Generate the build of the application
-RUN npm run build -- --configuration production --output-path=/dist
-WORKDIR /dist
-RUN pwd
-RUN ls -lrt
+RUN npm run build -- --configuration production --output-path=./dist
+#WORKDIR /dist
+#RUN pwd
+#RUN ls -lrt
 # Stage 2: Serve app with nginx server
 
 # Use official nginx image as the base image
