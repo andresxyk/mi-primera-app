@@ -37,7 +37,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # RUN rm -rf /usr/share/nginx/html/*
 # COPY --from=builder /dist /usr/share/nginx/html
 RUN rm -rf /opt/app-root/src/*
-COPY --from=builder /dist /opt/app-root/src
+COPY --from=builder --chmod=777 /dist /opt/app-root/src
 
 # Expose port 8080
 EXPOSE 8080
