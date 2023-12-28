@@ -7,7 +7,7 @@ FROM registry.access.redhat.com/ubi8/nodejs-18:latest as builder
 WORKDIR /app
 
 USER root
-
+RUN ls -lrt
 # Add the source code to app
 COPY package.json ./
 
@@ -20,10 +20,10 @@ COPY . .
 
 #genera dist
 RUN mkdir /dist
-WORKDIR /dist
+
 # Generate the build of the application
 RUN npm run build -- --configuration production --output-path=/dist
-
+WORKDIR /dist
 RUN pwd
 RUN ls -lrt
 # Stage 2: Serve app with nginx server
