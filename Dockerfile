@@ -19,7 +19,7 @@ RUN npm install -g @angular/cli
 COPY . .
 
 #genera dist
-RUN mkdir dist
+RUN mkdir /dist
 
 # Generate the build of the application
 RUN npm run build -- --configuration production --output-path=/dist
