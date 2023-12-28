@@ -19,7 +19,7 @@ COPY . .
 
 #genera dist
 #RUN mkdir /dist
-
+RUN --from=builder pwd
 # Generate the build of the application
 RUN npm run build -- --configuration production --output-path=./dist
 #WORKDIR /dist
